@@ -1,0 +1,61 @@
+from graphics import*
+from audio import*
+import powlite_fm
+import os,e32,appuifw as a
+pow=powlite_fm.manager()
+a.app.screen='full'
+
+run=1
+def exit():
+  global run
+  run =0
+  
+a.app.exit_key_handler=exit
+
+pat=u'e:\\'
+# def Playlist folder
+def start():
+  try:
+    if os.path.isfile(pat+u'mp3.dat'):
+      pass
+    else:
+      dr=pow.AskUser(find='dir')
+      file=open(pat +u'mp3.dat','w')
+      file.write(dr)
+      file.close()
+  except:pass
+start()
+file=open(pat +u'mp3.dat','r')
+r=file.readlines()
+file.close()
+dir=r[0]
+
+
+im= Image.new((320,240))
+def draw(rect):
+  c.blit(im)
+img=Image.open(pat+'pyphoto.jpg').resize((320,240))
+c=a.Canvas(redraw_callback=draw)
+a.app.body=c
+
+while run:
+ for pl in os.listdir(dir):
+  if pl[-4:]==u".mp3":
+    s=Sound.open(os.path.join(dir,pl))
+    s.play()
+    s.set_volume(1)
+    
+    while run:
+      if s.state()==1:
+        s.stop()
+        break                
+      sec=int(s.current_position())/1000000
+      min=(sec/60)
+      sec-=(min*60)
+      im.blit(img)
+      im.text((0,10),u''+ pl,0x0099cc)
+      im.text((200,40),u''+str(min)+' : '+str(sec),0xff0000)
+      draw(())
+      e32.ao_sleep(0.5)
+      
+s.stop()

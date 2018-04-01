@@ -1,0 +1,689 @@
+Binary files symbianoggplay.orig/bitmaps/s60splash.xcf and symbianoggplay/bitmaps/s60splash.xcf differ
+diff -burN -x '*~' -x .cproject -x .project -x CVS -x Thumbs.db -x '*.bmp' -x '*.mbm' -x ABLD.BAT symbianoggplay.orig/flac/groupS60V3/oggflacS60V3.mmp symbianoggplay/flac/groupS60V3/oggflacS60V3.mmp
+--- symbianoggplay.orig/flac/groupS60V3/oggflacS60V3.mmp	2008-01-09 10:32:10.000000000 +0000
++++ symbianoggplay/flac/groupS60V3/oggflacS60V3.mmp	2008-10-27 00:43:05.000000000 +0000
+@@ -2,7 +2,7 @@
+ TARGET                                  OggPlayFlaci.dll 
+ TARGETTYPE                              dll 
+ UID                                     0x1000008d 0xF020202B 
+-CAPABILITY                              NONE 
++CAPABILITY                              NetworkServices ReadUserData 
+ SECUREID                                0xF020202B 
+ VENDORID                                0 
+ /* [+] */ macro                         FLAC__NO_DLL FLAC__INTEGER_ONLY_LIBRARY FLAC__HAS_OGG 
+diff -burN -x '*~' -x .cproject -x .project -x CVS -x Thumbs.db -x '*.bmp' -x '*.mbm' -x ABLD.BAT symbianoggplay.orig/flac/groupS60V3MMF/oggflacS60V3MMF.mmp symbianoggplay/flac/groupS60V3MMF/oggflacS60V3MMF.mmp
+--- symbianoggplay.orig/flac/groupS60V3MMF/oggflacS60V3MMF.mmp	2008-03-27 14:21:22.000000000 +0000
++++ symbianoggplay/flac/groupS60V3MMF/oggflacS60V3MMF.mmp	2008-10-27 00:42:57.000000000 +0000
+@@ -2,7 +2,7 @@
+ TARGET                                  OggPlayFlaci.dll 
+ TARGETTYPE                              dll 
+ UID                                     0x1000008d 0xF020202B 
+-CAPABILITY                              NetworkServices
++CAPABILITY                              NetworkServices ReadUserData 
+ SECUREID                                0xF020202B 
+ VENDORID                                0 
+ /* [+] */ macro                         FLAC__NO_DLL FLAC__INTEGER_ONLY_LIBRARY FLAC__HAS_OGG 
+diff -burN -x '*~' -x .cproject -x .project -x CVS -x Thumbs.db -x '*.bmp' -x '*.mbm' -x ABLD.BAT symbianoggplay.orig/groupS60V3/OggPlayS60V3.mmp symbianoggplay/groupS60V3/OggPlayS60V3.mmp
+--- symbianoggplay.orig/groupS60V3/OggPlayS60V3.mmp	2008-02-06 00:18:58.000000000 +0000
++++ symbianoggplay/groupS60V3/OggPlayS60V3.mmp	2008-11-06 21:11:53.000000000 +0000
+@@ -2,7 +2,8 @@
+ TARGET                                  OggPlay.exe 
+ TARGETTYPE                              EXE 
+ UID                                     0x100039CE 0xF000A661 
+-CAPABILITY                              NONE 
++// ReadUserData capability required by the Remote Control API (used by COggPlayMediaKeysUi)
++CAPABILITY                              NetworkServices ReadUserData 
+ SECUREID                                0xF000A661 
+ VENDORID                                0 
+ EPOCSTACKSIZE                           0x8000 
+@@ -41,6 +42,7 @@
+ SOURCE                                  OggDialogs.cpp 
+ SOURCE                                  OggMsgEnv.cpp 
+ SOURCE                                  OggPlayAppView.cpp 
++SOURCE                                  OggPlayMediaKeysUi.cpp 
+ SOURCE                                  OggViews.cpp 
+ SOURCE                                  OggFiles.cpp 
+ SOURCE                                  OggHelperFcts.cpp 
+@@ -54,6 +56,9 @@
+ SOURCE                                  OggThreadClasses.cpp 
+ SOURCE                                  OggRateConvert.cpp 
+ SOURCE                                  OggAbsPlayback.cpp
++SOURCE                                  OggMTFile.cpp
++SOURCE                                  OggHttpSource.cpp
++SOURCE                                  OggMessageQueue.cpp
+ 
+ LANG                                    SC EN FR GE DU IT SP SW TU DA PO RU 
+ LIBRARY                                 aknskins.lib 
+@@ -85,6 +90,12 @@
+ LIBRARY                                 OggPlayVorbisi.lib 
+ LIBRARY                                 OggPlayFlaci.lib 
+ LIBRARY                                 OggPlayMadi.lib 
++LIBRARY                                 RemConCoreApi.lib 
++LIBRARY                                 RemConInterfaceBase.lib 
++
++LIBRARY                                 esock.lib
++LIBRARY                                 insock.lib
++LIBRARY                                 Inetprotutil.lib 
+ 
+ START BITMAP OggPlayIcon.mbm 
+   TARGETPATH                              \resource\apps 
+diff -burN -x '*~' -x .cproject -x .project -x CVS -x Thumbs.db -x '*.bmp' -x '*.mbm' -x ABLD.BAT symbianoggplay.orig/groupS60V3MMF/OggPlayS60V3mmf.mmp symbianoggplay/groupS60V3MMF/OggPlayS60V3mmf.mmp
+--- symbianoggplay.orig/groupS60V3MMF/OggPlayS60V3mmf.mmp	2008-03-27 14:21:26.000000000 +0000
++++ symbianoggplay/groupS60V3MMF/OggPlayS60V3mmf.mmp	2008-10-27 00:43:24.000000000 +0000
+@@ -2,7 +2,8 @@
+ TARGET                                  OggPlay.exe 
+ TARGETTYPE                              EXE 
+ UID                                     0x100039CE 0xF000A661 
+-CAPABILITY                              NetworkServices
++// ReadUserData capability required by the Remote Control API (used by COggPlayMediaKeysUi)
++CAPABILITY                              NetworkServices ReadUserData 
+ SECUREID                                0xF000A661 
+ VENDORID                                0 
+ EPOCSTACKSIZE                           0x8000 
+@@ -46,6 +47,7 @@
+ SOURCE                                  OggDialogs.cpp 
+ SOURCE                                  OggMsgEnv.cpp 
+ SOURCE                                  OggPlayAppView.cpp 
++SOURCE                                  OggPlayMediaKeysUi.cpp 
+ SOURCE                                  OggViews.cpp 
+ SOURCE                                  OggFiles.cpp 
+ SOURCE                                  OggHelperFcts.cpp 
+@@ -96,6 +98,8 @@
+ LIBRARY                                 OggPlayMadi.lib 
+ LIBRARY                                 MediaClientAudio.lib 
+ LIBRARY                                 MMFControllerFramework.lib 
++LIBRARY                                 RemConCoreApi.lib 
++LIBRARY                                 RemConInterfaceBase.lib 
+ 
+ LIBRARY                                 esock.lib
+ LIBRARY                                 insock.lib
+diff -burN -x '*~' -x .cproject -x .project -x CVS -x Thumbs.db -x '*.bmp' -x '*.mbm' -x ABLD.BAT symbianoggplay.orig/inc/OggPlay.h symbianoggplay/inc/OggPlay.h
+--- symbianoggplay.orig/inc/OggPlay.h	2008-03-27 14:21:26.000000000 +0000
++++ symbianoggplay/inc/OggPlay.h	2008-10-27 00:12:49.000000000 +0000
+@@ -314,6 +314,10 @@
+ 	COggPlayAppUi& iAppUi;
+ 	};
+ 
++#if defined(SERIES60V3)
++class COggPlayMediaKeysUi;
++#endif
++
+ #if defined(SERIES60)
+ class CAknErrorNote;
+ class CEikProgressInfo;
+@@ -493,6 +497,10 @@
+ 	COggActive* iActive;
+ #endif
+ 
++#if defined(SERIES60V3)
++	COggPlayMediaKeysUi *iMediaKeysUi;
++#endif
++
+ 	TBool iIsRunningEmbedded; // is true when application got started through the recognizer
+ 	TInt iTryResume; // after iTryResume seconds try resuming music (after sound device was stolen)
+ 
+diff -burN -x '*~' -x .cproject -x .project -x CVS -x Thumbs.db -x '*.bmp' -x '*.mbm' -x ABLD.BAT symbianoggplay.orig/inc/OggPlayAppView.h symbianoggplay/inc/OggPlayAppView.h
+--- symbianoggplay.orig/inc/OggPlayAppView.h	2008-02-10 14:01:10.000000000 +0000
++++ symbianoggplay/inc/OggPlayAppView.h	2008-10-30 01:14:02.000000000 +0000
+@@ -120,6 +120,9 @@
+ 	void HandleNewSkinLayout();
+ 	void OggSeek(TInt aSeekTime);
+ 
++	void VolumeUp();
++	void VolumeDown();
++
+ private:
+ 	void  ReadCanvas(TInt aCanvas, TOggParser& p);
+ 	void  ClearCanvases();
+diff -burN -x '*~' -x .cproject -x .project -x CVS -x Thumbs.db -x '*.bmp' -x '*.mbm' -x ABLD.BAT symbianoggplay.orig/inc/OggPlayMediaKeysUi.h symbianoggplay/inc/OggPlayMediaKeysUi.h
+--- symbianoggplay.orig/inc/OggPlayMediaKeysUi.h	1970-01-01 01:00:00.000000000 +0100
++++ symbianoggplay/inc/OggPlayMediaKeysUi.h	2008-11-06 21:01:03.000000000 +0000
+@@ -0,0 +1,70 @@
++/*
++*  Copyright (c) 2008 Francis Devereux
++*
++*  This program is free software; you can redistribute it and/or modify
++*  it under the terms of the GNU General Public License as published by
++*  the Free Software Foundation; either version 2 of the License, or
++*  (at your option) any later version.
++*
++*  This program is distributed in the hope that it will be useful,
++*  but WITHOUT ANY WARRANTY; without even the implied warranty of
++*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++*  GNU General Public License for more details.
++*
++*  You should have received a copy of the GNU General Public License
++*  along with this program; if not, write to the Free Software
++*  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
++*/
++
++
++#ifndef OGGPLAYMEDIAKEYSUI_H
++#define OGGPLAYMEDIAKEYSUI_H
++
++// This file is for Series 60 v3 only
++#if defined(SERIES60V3)
++
++#include <e32base.h>
++#include <remconcoreapitargetobserver.h>	// link against RemConCoreApi.lib
++#include <remconcoreapitarget.h>			// and
++#include <remconinterfaceselector.h>		// RemConInterfaceBase.lib
++
++#include "OggPlay.h"
++#include "OggPlayAppView.h"
++
++/* Handler for media keys on S60 3rd Edition devices */
++/* See http://wiki.forum.nokia.com/index.php/TSS000432_-_Utilizing_media_keys */
++/* in particular, where it says "Note that on most devices only volume keys can be used in 3rd party applications using this API." */
++
++class COggPlayMediaKeysUi : public CAknAppUi, public MRemConCoreApiTargetObserver
++	{
++public:
++	~COggPlayMediaKeysUi();
++
++	void ConstructL(COggPlayAppView *aAppView);
++
++	// From MRemConCoreApiTargetObserver
++
++	void MrccatoCommand(TRemConCoreApiOperationId aOperationId,
++						TRemConCoreApiButtonAction aButtonAct);
++	// following functions from MRemConCoreApiTargetObserver are not needed
++	// in this case -> use empty implementations for these:
++	// MrccatoPlay
++	// MrccatoTuneFunction
++	// MrccatoSelectDiskFunction
++	// MrccatoSelectAvInputFunction
++	// MrccatoSelectAudioInputFunction
++
++private:
++	static TInt VolumeUpCallBack(TAny *self);
++	static TInt VolumeDownCallBack(TAny *self);
++
++	CPeriodic *iVolumeUpTimer;
++	CPeriodic *iVolumeDownTimer;
++	TCallBack *iVolumeUpCallBack;
++	TCallBack *iVolumeDownCallBack;
++	COggPlayAppView *iAppView;
++	CRemConInterfaceSelector* iInterfaceSelector;
++	CRemConCoreApiTarget*	  iCoreTarget;
++	};
++#endif /* SERIES60V3 */
++#endif
+diff -burN -x '*~' -x .cproject -x .project -x CVS -x Thumbs.db -x '*.bmp' -x '*.mbm' -x ABLD.BAT symbianoggplay.orig/mad/groupS60V3/oggmadS60V3.mmp symbianoggplay/mad/groupS60V3/oggmadS60V3.mmp
+--- symbianoggplay.orig/mad/groupS60V3/oggmadS60V3.mmp	2008-02-11 12:40:14.000000000 +0000
++++ symbianoggplay/mad/groupS60V3/oggmadS60V3.mmp	2008-10-27 00:43:54.000000000 +0000
+@@ -1,7 +1,7 @@
+ TARGET                                  OggPlayMadi.dll 
+ TARGETTYPE                              dll 
+ UID                                     0x1000008d 0xF01FF685 
+-CAPABILITY                              NONE 
++CAPABILITY                              NetworkServices ReadUserData 
+ SECUREID                                0xF01FF685 
+ VENDORID                                0 
+ 
+diff -burN -x '*~' -x .cproject -x .project -x CVS -x Thumbs.db -x '*.bmp' -x '*.mbm' -x ABLD.BAT symbianoggplay.orig/mad/groupS60V3MMF/oggmadS60V3MMF.mmp symbianoggplay/mad/groupS60V3MMF/oggmadS60V3MMF.mmp
+--- symbianoggplay.orig/mad/groupS60V3MMF/oggmadS60V3MMF.mmp	2008-03-27 14:21:26.000000000 +0000
++++ symbianoggplay/mad/groupS60V3MMF/oggmadS60V3MMF.mmp	2008-10-27 00:44:00.000000000 +0000
+@@ -1,7 +1,7 @@
+ TARGET                                  OggPlayMadi.dll 
+ TARGETTYPE                              dll 
+ UID                                     0x1000008d 0xF01FF685 
+-CAPABILITY                              NetworkServices
++CAPABILITY                              NetworkServices ReadUserData 
+ SECUREID                                0xF01FF685 
+ VENDORID                                0 
+ 
+diff -burN -x '*~' -x .cproject -x .project -x CVS -x Thumbs.db -x '*.bmp' -x '*.mbm' -x ABLD.BAT symbianoggplay.orig/shared/groupS60V3/oggsharedS60V3.mmp symbianoggplay/shared/groupS60V3/oggsharedS60V3.mmp
+--- symbianoggplay.orig/shared/groupS60V3/oggsharedS60V3.mmp	2008-01-09 11:29:10.000000000 +0000
++++ symbianoggplay/shared/groupS60V3/oggsharedS60V3.mmp	2008-10-27 00:44:27.000000000 +0000
+@@ -3,7 +3,7 @@
+ TARGETTYPE    dll
+ UID 0x1000008d 0xF020202C
+ 
+-CAPABILITY                              NONE 
++CAPABILITY                              NetworkServices ReadUserData 
+ SECUREID                                0xF020202C
+ VENDORID                                0
+ 
+diff -burN -x '*~' -x .cproject -x .project -x CVS -x Thumbs.db -x '*.bmp' -x '*.mbm' -x ABLD.BAT symbianoggplay.orig/shared/groupS60V3MMF/oggsharedS60V3MMF.mmp symbianoggplay/shared/groupS60V3MMF/oggsharedS60V3MMF.mmp
+--- symbianoggplay.orig/shared/groupS60V3MMF/oggsharedS60V3MMF.mmp	2008-03-27 14:21:28.000000000 +0000
++++ symbianoggplay/shared/groupS60V3MMF/oggsharedS60V3MMF.mmp	2008-10-27 00:44:35.000000000 +0000
+@@ -3,7 +3,7 @@
+ TARGETTYPE    dll
+ UID 0x1000008d 0xF020202C
+ 
+-CAPABILITY                              NetworkServices 
++CAPABILITY                              NetworkServices ReadUserData 
+ SECUREID                                0xF020202C
+ VENDORID                                0
+ 
+diff -burN -x '*~' -x .cproject -x .project -x CVS -x Thumbs.db -x '*.bmp' -x '*.mbm' -x ABLD.BAT symbianoggplay.orig/src/OggPlay.cpp symbianoggplay/src/OggPlay.cpp
+--- symbianoggplay.orig/src/OggPlay.cpp	2008-03-27 14:21:28.000000000 +0000
++++ symbianoggplay/src/OggPlay.cpp	2008-11-06 21:01:49.000000000 +0000
+@@ -64,6 +64,10 @@
+ #include "OggPlayAppView.h"
+ #include "OggDialogs.h" 
+ 
++#if defined(SERIES60V3)
++#include "OggPlayMediaKeysUi.h"
++#endif
++
+ #if defined(SERIES80)
+ #include "OggDialogsS80.h"
+ #endif
+@@ -666,6 +670,11 @@
+  	iAppView = new(ELeave) COggPlayAppView;
+ 	iAppView->ConstructL(this);
+ 
++#if defined(SERIES60V3)
++	iMediaKeysUi = new(ELeave) COggPlayMediaKeysUi;
++	iMediaKeysUi->ConstructL(iAppView);
++#endif
++
+ 	SetRandomL(iSettings.iRandom);
+ 
+ #if defined(SERIES60SUI)
+@@ -893,6 +902,10 @@
+ 		RemoveFromStack(iAppView);
+ 	delete iAppView;
+ 
++#if defined(SERIES60V3)
++	delete iMediaKeysUi;
++#endif
++
+ #if defined(MONITOR_TELEPHONE_LINE)
+ 	delete iActive;
+ #endif
+diff -burN -x '*~' -x .cproject -x .project -x CVS -x Thumbs.db -x '*.bmp' -x '*.mbm' -x ABLD.BAT symbianoggplay.orig/src/OggPlayAppView.cpp symbianoggplay/src/OggPlayAppView.cpp
+--- symbianoggplay.orig/src/OggPlayAppView.cpp	2008-03-27 14:21:28.000000000 +0000
++++ symbianoggplay/src/OggPlayAppView.cpp	2008-10-30 03:03:59.000000000 +0000
+@@ -2043,24 +2043,35 @@
+ 			{
+ 			if (playbackState == CAbsPlayback::EPlaying)
+ 				{
+-				TInt volume = iApp->iVolume;
+ 				if ((scanCode == EOggUp) || (scanCode == EOggRight))
+-					volume += KStepVolume;
++					VolumeUp();
+ 				else if ((scanCode == EOggDown) || (scanCode == EOggLeft))
+-					volume -= KStepVolume;
+-
+-				if (volume>KMaxVolume)
+-					volume = KMaxVolume;
++					VolumeDown();
+ 
+-				if (volume<0)
+-					volume = 0;
+-
+-				iApp->SetVolume(volume);
+-				UpdateVolume();
++				return EKeyWasConsumed;
+ 				}
+ 			}
+ 		}
+ 
++#if defined(SERIES60V3)
++	// Note that this code doesn't do anything on Nokia N95-1
++	// (COggPlayMediaKeysUi handles volume keys on the N95).  It can be
++	// re-enabled if it is found to do something on other handsets.
++//	if (aType == EEventKeyDown || aType == EEventKey)
++//		{
++//		if (scanCode == EKeyIncVolume)
++//			{
++//			VolumeUp();
++//			return EKeyWasConsumed;
++//			}
++//		else if (scanCode == EKeyDecVolume)
++//			{
++//			VolumeDown();
++//			return EKeyWasConsumed;
++//			}
++//		}
++#endif
++
+ 	return EKeyWasNotConsumed;
+ #else
+ 	// UIQ keyhandling
+@@ -2206,6 +2217,28 @@
+ #endif  // UIQ keyhandling
+ 	}
+ 
++void COggPlayAppView::VolumeUp()
++	{
++	TInt volume = iApp->iVolume;
++	volume += KStepVolume;
++
++	if (volume>KMaxVolume) volume = KMaxVolume;
++
++	iApp->SetVolume(volume);
++	UpdateVolume();
++	}
++
++void COggPlayAppView::VolumeDown()
++	{
++	TInt volume = iApp->iVolume;
++	volume -= KStepVolume;
++
++	if (volume<0) volume = 0;
++
++	iApp->SetVolume(volume);
++	UpdateVolume();
++	}
++
+ void COggPlayAppView::OggSeek(TInt aSeekTime)
+ 	{
+ 	CAbsPlayback* playback = iApp->iOggPlayback;
+diff -burN -x '*~' -x .cproject -x .project -x CVS -x Thumbs.db -x '*.bmp' -x '*.mbm' -x ABLD.BAT symbianoggplay.orig/src/OggPlayMediaKeysUi.cpp symbianoggplay/src/OggPlayMediaKeysUi.cpp
+--- symbianoggplay.orig/src/OggPlayMediaKeysUi.cpp	1970-01-01 01:00:00.000000000 +0100
++++ symbianoggplay/src/OggPlayMediaKeysUi.cpp	2008-11-06 21:00:38.000000000 +0000
+@@ -0,0 +1,286 @@
++/*
++ *	Copyright (c) 2008 Francis Devereux
++ *
++ *	This program is free software; you can redistribute it and/or modify
++ *	it under the terms of the GNU General Public License as published by
++ *	the Free Software Foundation; either version 2 of the License, or
++ *	(at your option) any later version.
++ *
++ *	This program is distributed in the hope that it will be useful,
++ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ *	GNU General Public License for more details.
++ *
++ *	You should have received a copy of the GNU General Public License
++ *	along with this program; if not, write to the Free Software
++ *	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
++ */
++
++// Platform settings
++#include <OggOs.h>
++
++// This file is for Series 60 v3 only
++#if defined(SERIES60V3)
++
++#include "OggPlayMediaKeysUi.h"
++
++void COggPlayMediaKeysUi::ConstructL(COggPlayAppView *aAppView)
++	{
++	iVolumeUpTimer = iVolumeDownTimer = 0;
++
++	iAppView = aAppView;
++
++	iVolumeUpCallBack = new(ELeave) TCallBack(COggPlayMediaKeysUi::VolumeUpCallBack, this);
++	iVolumeDownCallBack = new(ELeave) TCallBack(COggPlayMediaKeysUi::VolumeDownCallBack, this);
++
++	iInterfaceSelector = CRemConInterfaceSelector::NewL();
++	iCoreTarget = CRemConCoreApiTarget::NewL(*iInterfaceSelector, *this);
++	iInterfaceSelector->OpenTargetL();
++	}
++
++COggPlayMediaKeysUi::~COggPlayMediaKeysUi()
++	{
++	// Don't delete target, it is owned by the interface selector.
++	// delete iTarget;
++	delete iInterfaceSelector;
++
++	if (iVolumeUpTimer)
++	{
++		delete iVolumeUpTimer;
++	}
++
++	if (iVolumeDownTimer)
++	{
++		delete iVolumeDownTimer;
++	}
++
++	delete iVolumeUpCallBack;
++	delete iVolumeDownCallBack;
++	}
++
++TInt COggPlayMediaKeysUi::VolumeUpCallBack(TAny *aSelf)
++	{
++	COggPlayMediaKeysUi *self = (COggPlayMediaKeysUi *)aSelf;
++	self->iAppView->VolumeUp();
++	return 1;
++	}
++
++TInt COggPlayMediaKeysUi::VolumeDownCallBack(TAny *aSelf)
++	{
++	COggPlayMediaKeysUi *self = (COggPlayMediaKeysUi *)aSelf;
++	self->iAppView->VolumeDown();
++	return 1;
++	}
++
++// ----------------------------------------------------------------------------
++// MrccatoCommand()
++// Receives events (press/click/release) from the following buttons:
++// 'Play/Pause', 'Volume Up', 'Volume Down', 'Stop', 'Rewind', 'Forward'
++// Note: my handset (Nokia N95-1) only passes through the volume up and down
++// events, so the code for the other operations is commented out because I
++// could not test it.
++// ----------------------------------------------------------------------------
++void COggPlayMediaKeysUi::MrccatoCommand(TRemConCoreApiOperationId aOperationId,
++										 TRemConCoreApiButtonAction aButtonAct)
++	{
++	TRequestStatus status;
++	switch( aOperationId )
++		{
++//		case ERemConCoreApiPausePlayFunction:
++//			{
++//			switch (aButtonAct)
++//				{
++//				case ERemConCoreApiButtonPress:
++//					// Play/Pause button pressed
++//					iApp->PauseResume();
++//					break;
++// //				case ERemConCoreApiButtonRelease:
++// //					// Play/Pause button released
++// //					break;
++// //				case ERemConCoreApiButtonClick:
++// //					// Play/Pause button clicked
++// //					break;
++//				default:
++//					// Play/Pause unknown action
++//					break;
++//				}
++//			//Send the response back to Remcon server
++//			iCoreTarget->PausePlayFunctionResponse(status, KErrNone);
++//			User::WaitForRequest(status);
++//			break;
++//			}
++
++//		case ERemConCoreApiStop:
++//			{
++//			switch (aButtonAct)
++//				{
++//				// see above (case ERemConCoreApiPausePlayFunction)
++//				// for possible actions
++//				case ERemConCoreApiButtonPress:
++//					iApp->HandleCommandL(EOggStop);
++//					break;
++//				default:
++//					break;
++//				}
++//			iCoreTarget->StopResponse(status, KErrNone);
++//			User::WaitForRequest(status);
++//			break;
++//			}
++
++//		case ERemConCoreApiRewind:
++//			{
++//			switch (aButtonAct)
++//				{
++//				case ERemConCoreApiButtonPress:
++//					iAppView->OggSeek(-KFfRwdStep);
++//					break;
++//				default:
++//					break;
++//				}
++//			iCoreTarget->RewindResponse(status, KErrNone);
++//			User::WaitForRequest(status);
++//			break;
++//			}
++
++//			case ERemConCoreApiForward: // should this be ERemConCoreApiFastForward ?
++//			{
++//			switch (aButtonAct)
++//				{
++//				case ERemConCoreApiButtonPress:
++//					iAppView->OggSeek(KFfRwdStep);
++//					break;
++//				default:
++//					break;
++//				}
++//			iCoreTarget->ForwardResponse(status, KErrNone);
++//			User::WaitForRequest(status);
++//			break;
++//			}
++
++		// On the N95-1, the volume button on the side of the phone generate
++		// aButtonAct == ERemConCoreApiButtonClick events when they are
++		// pressed, and then generate EKeyIncVolume/EKeyDecVolume key events
++		// (sent to OfferKeyEventL) when held down, and the volume buttons on
++		// the headphone remote generate aButtonAct ==
++		// ERemConCoreApiButtonPress and ERemConCoreApiButtonRelease events.
++		// Weird!
++
++		case ERemConCoreApiVolumeUp:
++			{
++
++			switch (aButtonAct)
++				{
++				case ERemConCoreApiButtonClick:
++					iAppView->VolumeUp();
++					break;
++
++				case ERemConCoreApiButtonPress:
++					{
++					iAppView->VolumeUp();
++
++					if (iVolumeUpTimer) delete iVolumeUpTimer;
++
++					TTimeIntervalMicroSeconds32 repeatDelay, repeatInterval;
++					iEikonEnv->WsSession().GetKeyboardRepeatRate(repeatDelay, repeatInterval);
++
++					iVolumeUpTimer = CPeriodic::New(CActive::EPriorityStandard);
++					iVolumeUpTimer->Start(repeatDelay,
++										  repeatInterval,
++										  *iVolumeUpCallBack);
++					break;
++					}
++
++				case ERemConCoreApiButtonRelease:
++					if (iVolumeUpTimer)
++					{
++						delete iVolumeUpTimer;
++						iVolumeUpTimer = 0;
++					}
++					break;
++
++				default:
++					break;
++				}
++			iCoreTarget->VolumeUpResponse(status, KErrNone);
++			User::WaitForRequest(status);
++			break;
++			}
++
++		case ERemConCoreApiVolumeDown:
++			{
++			switch (aButtonAct)
++				{
++				case ERemConCoreApiButtonClick:
++					iAppView->VolumeDown();
++					break;
++
++				case ERemConCoreApiButtonPress:
++					{
++					iAppView->VolumeDown();
++
++					if (iVolumeDownTimer) delete iVolumeDownTimer;
++
++					TTimeIntervalMicroSeconds32 repeatDelay, repeatInterval;
++					iEikonEnv->WsSession().GetKeyboardRepeatRate(repeatDelay, repeatInterval);
++
++					iVolumeDownTimer = CPeriodic::New(CActive::EPriorityStandard);
++					iVolumeDownTimer->Start(TTimeIntervalMicroSeconds32(repeatDelay),
++											TTimeIntervalMicroSeconds32(repeatInterval),
++											*iVolumeDownCallBack);
++					break;
++					}
++
++				case ERemConCoreApiButtonRelease:
++					if (iVolumeDownTimer)
++					{
++						delete iVolumeDownTimer;
++						iVolumeDownTimer = 0;
++					}
++					break;
++
++				default:
++					// unknown action
++					break;
++				}
++			iCoreTarget->VolumeDownResponse(status, KErrNone);
++			User::WaitForRequest(status);
++			break;
++			}
++
++//			case ERemConCoreApiFastForward: // should this be ERemConCoreApiForward?
++//			{
++//			switch (aButtonAct)
++//				{
++//				case ERemConCoreApiButtonPress:
++//					iApp->NextSong();
++//					break;
++//				default:
++//					break;
++//				}
++//			iCoreTarget->FastForwardResponse(status, KErrNone);
++//			User::WaitForRequest(status);
++//			break;
++//			}
++
++//		case ERemConCoreApiBackward:
++//			{
++//			switch (aButtonAct)
++//				{
++//				case ERemConCoreApiButtonPress:
++//					iApp->PreviousSong();
++//					break;
++//				default:
++//					break;
++//				}
++//			iCoreTarget->BackwardResponse(status, KErrNone);
++//			User::WaitForRequest(status);
++//			break;
++//			}
++
++		default:
++			break;
++		}
++	}
++
++#endif /* SERIES60V3 */
++
+diff -burN -x '*~' -x .cproject -x .project -x CVS -x Thumbs.db -x '*.bmp' -x '*.mbm' -x ABLD.BAT symbianoggplay.orig/vorbis/groupS60V3/OggvorbisS60V3.mmp symbianoggplay/vorbis/groupS60V3/OggvorbisS60V3.mmp
+--- symbianoggplay.orig/vorbis/groupS60V3/OggvorbisS60V3.mmp	2008-01-09 17:05:36.000000000 +0000
++++ symbianoggplay/vorbis/groupS60V3/OggvorbisS60V3.mmp	2008-10-27 00:44:40.000000000 +0000
+@@ -2,7 +2,7 @@
+ TARGETTYPE                              dll 
+ UID                                     0x1000008d 0xF01FD21D
+ 
+-CAPABILITY                              NONE 
++CAPABILITY                              NetworkServices ReadUserData 
+ SECUREID                                0xF01FD21D
+ VENDORID                                0
+ 
+diff -burN -x '*~' -x .cproject -x .project -x CVS -x Thumbs.db -x '*.bmp' -x '*.mbm' -x ABLD.BAT symbianoggplay.orig/vorbis/groupS60V3MMF/OggvorbisS60V3MMF.mmp symbianoggplay/vorbis/groupS60V3MMF/OggvorbisS60V3MMF.mmp
+--- symbianoggplay.orig/vorbis/groupS60V3MMF/OggvorbisS60V3MMF.mmp	2008-03-27 14:21:28.000000000 +0000
++++ symbianoggplay/vorbis/groupS60V3MMF/OggvorbisS60V3MMF.mmp	2008-10-27 00:44:45.000000000 +0000
+@@ -3,7 +3,7 @@
+ TARGETTYPE                              dll 
+ UID                                     0x1000008d 0xF01FD21D
+ 
+-CAPABILITY                              NetworkServices
++CAPABILITY                              NetworkServices ReadUserData 
+ SECUREID                                0xF01FD21D
+ VENDORID                                0
+ 

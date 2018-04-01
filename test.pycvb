@@ -1,0 +1,30 @@
+import e32, appuifw as aw
+from graphics import*
+from sysinfo import*
+
+x,y=display_pixels()
+img=Image.new((x,y))
+
+def redraw(rect):
+  c.blit(img)
+  
+c=aw.Canvas(redraw_callback=redraw)
+aw.app.screen="full"
+aw.app.body=c
+bg=Image.open('e:\\im.png')
+
+text=u'start it long long string end'
+t=0
+run=1
+def exit():
+  global run
+  run=0
+aw.app.exit_key_handler=exit
+
+while run:
+  t-=1
+  if t<-100:t=200
+  img.blit(bg)
+  img.text((t,220),text,0xffffff)
+  redraw(())
+  e32.ao_sleep(0.04)
